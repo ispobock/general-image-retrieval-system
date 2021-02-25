@@ -14,7 +14,7 @@ import torch.backends.cudnn as cudnn
 
 from preprocessing import preprocess
 from utils import build_metric, build_reranker
-from settings import AGGREGATOR, RE_RANKER, NUM_TO_RETRIEVE, USE_GPU
+from settings import AGGREGATOR, RE_RANKER, NUM_TO_RETRIEVE, USE_GPU, METRIC
 USE_GPU = torch.cuda.is_available() and USE_GPU
 
 # preprocessing
@@ -26,7 +26,7 @@ def query_hook(module, input, output):
 
 handle = model.layer4.register_forward_hook(query_hook)
 
-metric = build_metric('KNN')
+metric = build_metric(METRIC)
 if RE_RANKER is not None:
     re_ranker = build_reranker(RE_RANKER)
 

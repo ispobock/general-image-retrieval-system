@@ -4,8 +4,6 @@ from .base import ModuleBase
 
 import torch
 
-from IPython import embed
-
 class MetricBase(ModuleBase):
     """
     The base class for similarity metric.
@@ -68,52 +66,8 @@ class KNN(MetricBase):
             sorted_index = sorted_index[:, :self._hyper_params["top_k"]]
         return dis, sorted_index
 
-class Cosine_KNN(MetricBase):
-    """
-    Similarity measure based on the euclidean distance.
-
-    Hyper-Params:
-        top_k (int): top_k nearest neighbors will be output in sorted order. If it is 0, all neighbors will be output.
-    """
-    default_hyper_params = {
-        "top_k": 0,
-    }
-
-    def __init__(self, hps: Dict or None = None):
-        """
-        Args:
-            hps (dict): default hyper parameters in a dict (keys, values).
-        """
-        super(Cosine_KNN, self).__init__(hps)
-
-    def _cal_dis(self, query_fea: torch.tensor, gallery_fea: torch.tensor) -> torch.tensor:
-        """
-        Calculate the distance between query set features and gallery set features.
-
-        Args:
-            query_fea (torch.tensor): query set features.
-            gallery_fea (torch.tensor): gallery set features.
-
-        Returns:
-            dis (torch.tensor): the distance between query set features and gallery set features.
-        """
-        query_fea = query_fea / query_fea.norm(dim=1)[:, None]
-        gallery_fea = gallery_fea / gallery_fea.norm(dim=1)[:, None]
-        gallery_fea = gallery_fea.transpose(0, 1)
-        cos_sim = torch.mm(query_fea, gallery_fea)
-        return cos_sim
-
-    def __call__(self, query_fea: torch.tensor, gallery_fea: torch.tensor) -> (torch.tensor, torch.tensor):
-
-        dis = self._cal_dis(query_fea, gallery_fea)
-        sorted_index = torch.argsort(-dis, dim=1)
-        if self._hyper_params["top_k"] != 0:
-            sorted_index = sorted_index[:, :self._hyper_params["top_k"]]
-        return dis, sorted_index
-
 METRICS = {
-    'KNN': KNN,
-    'Cosine_KNN': Cosine_KNN
+    'KNN': KNN
 }
 
 def build_metric(name, **kwargs):
@@ -121,12 +75,3 @@ def build_metric(name, **kwargs):
         raise KeyError("Invalid metric, got '{}', but expected to be one of {}".format(name, METRICS.keys()))
     metric = METRICS[name](**kwargs)
     return metric
-
-# if __name__ == "__main__":
-#     mt = build_metric('L2_KNN')
-#     mt2 = build_metric('Cosine_KNN')
-#     query_fea = torch.rand(100, 1024)
-#     gallery_fea = torch.rand(1000, 1024)
-#     dis, idx = mt(query_fea, gallery_fea)
-#     dis2, idx2 = mt2(query_fea, gallery_fea)
-#     embed()
