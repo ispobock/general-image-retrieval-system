@@ -9,6 +9,6 @@ accesslog = "log/access.log"
 errorlog = "log/debug.log"
 daemon = False
 
-workers = 8
+workers = 16
 worker_class = 'gevent'
 x_forwarded_for_header = 'X-FORWARDED-FOR'

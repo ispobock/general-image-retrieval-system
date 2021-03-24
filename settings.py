@@ -13,4 +13,3 @@ GPU_DEVICES = '1,2'
 
 EXTRACT_GALLERY_FEATURE = False
 GALLERY_PATH = '/home/bk/general_sys/data/gallery/'
-

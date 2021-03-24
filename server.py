@@ -10,6 +10,8 @@ import torch
 from torchvision import transforms
 import numpy as np
 from PIL import Image
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 import torch.backends.cudnn as cudnn
 
 from preprocessing import preprocess
@@ -73,4 +75,4 @@ def inference():
     return result
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", debug=False, port=7000)
+    app.run(host="0.0.0.0", debug=False, port=8090)
